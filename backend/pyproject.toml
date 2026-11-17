@@ -22,5 +22,13 @@ dev = [
     "ruff>=0.17.4",
 ]
 
-[tool.ruff.lint.per-file-ignores]
-"**/migrations/*.py" = ["RUF012"]
+[tool.ruff.lint]
+# RUF012 marca las listas a nivel de clase, que Django y DRF usan por todos lados
+# (permission_classes, fields, migraciones...).
+ignore = ["RUF012"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+# Los tests de cada app pueden estar en tests.py o en archivos test_*.py.
+python_files = ["tests.py", "test_*.py"]
+addopts = "-ra"
