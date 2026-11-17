@@ -24,7 +24,6 @@ from drf_spectacular.views import (
 
 from config.views import health
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/health/', health, name='health'),
