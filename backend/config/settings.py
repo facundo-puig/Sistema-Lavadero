@@ -63,7 +63,14 @@ INSTALLED_APPS = [
 
     # CORS
     'corsheaders',
+
+    #aplicacion usuarios
+    'usuarios'
 ]
+
+AUTH_USER_MODEL = 'usuarios.Usuario'
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
