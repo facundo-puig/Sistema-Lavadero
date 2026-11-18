@@ -17,3 +17,7 @@ class LoginRespuestaSerializer(serializers.Serializer):
     access = serializers.CharField()
     refresh = serializers.CharField()
     usuario = UsuarioLoginSerializer()
+
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()

@@ -1,13 +1,13 @@
 
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .serializers import LoginRespuestaSerializer, LoginSerializer
-from .services import iniciar_sesion
+from .serializers import LoginRespuestaSerializer, LoginSerializer, LogoutSerializer
+from .services import cerrar_sesion, iniciar_sesion
 
 
 class LoginView(APIView):
@@ -30,3 +30,25 @@ class LoginView(APIView):
         )
 
         return Response(resultado, status=status.HTTP_200_OK)
+
+
+class LogoutView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        request=LogoutSerializer,
+        responses={204: None},
+        description='Cierra la sesión invalidando el refresh token.',
+        tags=['Autenticación'],
+    )
+    def post(self, request):
+        serializer = LogoutSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        cerrar_sesion(
+            usuario=request.user,
+            refresh_token=serializer.validated_data['refresh'],
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
