@@ -24,3 +24,28 @@ El almacenamiento en `sessionStorage` es una solución provisional para el desar
 - Usuario inactivo: HTTP 401.
 - Tests automatizados con pytest.
 - Integración comprobada entre Django y Next.js.
+
+
+
+
+## Renovación y cierre de sesión (HU-A3)
+
+El sistema permite renovar automáticamente el token de acceso y cerrar sesión.
+
+**Endpoints:**
+- `POST /api/auth/refresh/`: recibe un refresh válido y devuelve un nuevo access.
+- `POST /api/auth/logout/`: requiere autenticación y recibe el refresh para incorporarlo a la blacklist.
+
+En el frontend, `apiFetch` detecta respuestas HTTP 401 de peticiones autenticadas e intenta renovar el access utilizando el refresh almacenado en `sessionStorage`. Si la renovación funciona, actualiza el token y repite la petición original una sola vez.
+
+Si el refresh es inválido o está vencido, elimina la sesión local y redirige al usuario a `/login` con una notificación.
+
+El botón **Cerrar sesión** revoca el refresh en el backend y elimina los datos de sesión del navegador. El access emitido anteriormente puede seguir siendo válido hasta su vencimiento.
+
+**Pruebas realizadas:**
+- Refresh correcto: HTTP 200.
+- Logout correcto: HTTP 204.
+- Refresh revocado: HTTP 401.
+- Renovación automática del access comprobada desde Next.js.
+- Redirección al login comprobada ante refresh inválido.
+- 106 tests del backend aprobados.

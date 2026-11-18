@@ -1,8 +1,9 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect,useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { apiFetch } from "@/lib/api";
 import { guardarSesion } from "@/lib/auth";
@@ -14,6 +15,18 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
+
+useEffect(() => {
+  const aviso = sessionStorage.getItem("lavadero_aviso");
+
+  if (aviso === "sesion_expirada") {
+    sessionStorage.removeItem("lavadero_aviso");
+
+    toast.warning(
+      "Tu sesión venció. Iniciá sesión nuevamente."
+    );
+  }
+}, []);  
 
   async function iniciarSesion(evento) {
     evento.preventDefault();
@@ -31,8 +44,11 @@ export default function LoginPage() {
 
       guardarSesion(datos);
 
-      // Redirección provisional hasta confirmar
-      // las rutas finales de cada rol con el equipo.
+      // Limpiar los campos después de iniciar sesión.
+      setEmail("");
+      setPassword("");
+
+      // Redirección provisional según el rol.
       if (datos.usuario.rol === "CLIENTE") {
         router.replace("/turnos/nuevo");
       } else {
@@ -56,7 +72,11 @@ export default function LoginPage() {
           Iniciar sesión
         </p>
 
-        <form onSubmit={iniciarSesion} className="space-y-4">
+        <form
+          onSubmit={iniciarSesion}
+          autoComplete="off"
+          className="space-y-4"
+        >
           <div>
             <label
               htmlFor="email"
@@ -68,7 +88,7 @@ export default function LoginPage() {
             <input
               id="email"
               type="email"
-              autoComplete="email"
+              autoComplete="off"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -88,7 +108,7 @@ export default function LoginPage() {
             <input
               id="password"
               type="password"
-              autoComplete="current-password"
+              autoComplete="off"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}

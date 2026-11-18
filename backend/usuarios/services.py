@@ -1,6 +1,7 @@
 
 from django.contrib.auth import authenticate, get_user_model
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
+from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
@@ -32,3 +33,19 @@ def iniciar_sesion(email, password):
             'rol': usuario_autenticado.rol,
         },
     }
+
+def cerrar_sesion(usuario, refresh_token):
+    try:
+        token = RefreshToken(refresh_token)
+
+        if str(token['user_id']) != str(usuario.id):
+            raise ValidationError({
+                'refresh': 'El token no pertenece al usuario.'
+            })
+
+        token.blacklist()
+
+    except TokenError:
+        raise ValidationError({
+            'refresh': 'El token es inválido o ya fue revocado.'
+        })

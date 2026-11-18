@@ -1,6 +1,10 @@
+
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 import { Toaster } from "sonner";
+
+import SesionHeader from "@/components/SesionHeader";
+
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,13 +29,19 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col bg-gray-50 text-gray-900">
         <header className="border-b bg-white">
-          <div className="mx-auto w-full max-w-5xl px-4 py-3 font-semibold">
-            Sistema Lavadero
+          <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3">
+            <span className="font-semibold">
+              Sistema Lavadero
+            </span>
+
+            <SesionHeader />
           </div>
         </header>
+
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
           {children}
         </main>
+
         <Toaster richColors position="top-right" />
       </body>
     </html>
