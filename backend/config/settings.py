@@ -68,6 +68,9 @@ INSTALLED_APPS = [
     #aplicacion usuarios
     'usuarios',
 
+    #aplicacion catalogo
+    'catalogo',
+  
     # Aplicación de turnos
     'turnos',
 ]
