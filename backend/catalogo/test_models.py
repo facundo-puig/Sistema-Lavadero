@@ -32,14 +32,13 @@ def test_tarifa_unica_por_servicio_y_tipo_de_vehiculo(servicio):
         precio=Decimal("9000.00"),
         duracion_minutos=45,
     )
-    with pytest.raises(IntegrityError):
-        with transaction.atomic():
-            Tarifa.objects.create(
-                servicio=servicio,
-                tipo_vehiculo=TipoVehiculo.AUTO,
-                precio=Decimal("9500.00"),
-                duracion_minutos=50,
-            )
+    with pytest.raises(IntegrityError), transaction.atomic():
+        Tarifa.objects.create(
+            servicio=servicio,
+            tipo_vehiculo=TipoVehiculo.AUTO,
+            precio=Decimal("9500.00"),
+            duracion_minutos=50,
+        )
 
 
 def test_mismo_servicio_admite_tarifas_de_distinto_tipo_de_vehiculo(servicio):
@@ -60,34 +59,31 @@ def test_mismo_servicio_admite_tarifas_de_distinto_tipo_de_vehiculo(servicio):
 
 @pytest.mark.parametrize("precio", [Decimal("0.00"), Decimal("-1.00")])
 def test_tarifa_con_precio_no_positivo_es_invalida(servicio, precio):
-    with pytest.raises(IntegrityError):
-        with transaction.atomic():
-            Tarifa.objects.create(
-                servicio=servicio,
-                tipo_vehiculo=TipoVehiculo.AUTO,
-                precio=precio,
-                duracion_minutos=45,
-            )
+    with pytest.raises(IntegrityError), transaction.atomic():
+        Tarifa.objects.create(
+            servicio=servicio,
+            tipo_vehiculo=TipoVehiculo.AUTO,
+            precio=precio,
+            duracion_minutos=45,
+        )
 
 
 def test_tarifa_con_duracion_cero_es_invalida(servicio):
-    with pytest.raises(IntegrityError):
-        with transaction.atomic():
-            Tarifa.objects.create(
-                servicio=servicio,
-                tipo_vehiculo=TipoVehiculo.AUTO,
-                precio=Decimal("9000.00"),
-                duracion_minutos=0,
-            )
+    with pytest.raises(IntegrityError), transaction.atomic():
+        Tarifa.objects.create(
+            servicio=servicio,
+            tipo_vehiculo=TipoVehiculo.AUTO,
+            precio=Decimal("9000.00"),
+            duracion_minutos=0,
+        )
 
 
 def test_patente_unica(cliente):
     Vehiculo.objects.create(cliente=cliente, patente="AB123CD", tipo=TipoVehiculo.AUTO)
-    with pytest.raises(IntegrityError):
-        with transaction.atomic():
-            Vehiculo.objects.create(
-                cliente=cliente, patente="AB123CD", tipo=TipoVehiculo.MOTO
-            )
+    with pytest.raises(IntegrityError), transaction.atomic():
+        Vehiculo.objects.create(
+            cliente=cliente, patente="AB123CD", tipo=TipoVehiculo.MOTO
+        )
 
 
 def test_no_se_borra_un_cliente_con_vehiculos(cliente):
