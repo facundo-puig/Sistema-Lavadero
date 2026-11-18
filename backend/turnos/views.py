@@ -1,6 +1,7 @@
+from django.contrib.auth import get_user_model
 from django.db.models import Prefetch
-from drf_spectacular.utils import extend_schema
-from rest_framework import status, viewsets
+from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework import mixins, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -9,17 +10,42 @@ from turnos.reservas import reservar_turno
 from turnos.serializers import ReservaSerializer, TurnoSerializer
 from turnos.services import ErrorDeTurno
 
+Usuario = get_user_model()
 
-class TurnoViewSet(viewsets.GenericViewSet):
-    # TODO: cambiar a [EsCliente] cuando se mergee `usuarios/permisos.py` (HU-A4).
+
+@extend_schema_view(
+    list=extend_schema(
+        summary='Listar turnos',
+        description=(
+            'El cliente ve solo sus turnos. Administrador y operario ven todos. '
+            'Ordenados por inicio, paginados de a 20.'
+        ),
+    ),
+    retrieve=extend_schema(
+        summary='Detalle de un turno',
+        description='Devuelve 404 si el turno no existe o es de otro cliente.',
+    ),
+)
+class TurnoViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
+    # TODO: la reserva (`create`) es solo para clientes: cuando se mergee
+    # `usuarios/permisos.py` (HU-A4), usar EsCliente en esa acción.
     permission_classes = [IsAuthenticated]
     serializer_class = TurnoSerializer
     queryset = Turno.objects.all()
 
     def get_queryset(self):
-        return Turno.objects.select_related('vehiculo', 'box').prefetch_related(
+        turnos = Turno.objects.select_related('vehiculo', 'box').prefetch_related(
             Prefetch('servicios', queryset=TurnoServicio.objects.select_related('servicio'))
         )
+        usuario = self.request.user
+        if usuario.rol == Usuario.Rol.CLIENTE:
+            # Un cliente nunca ve (ni sabe que existe) un turno de otro: da 404.
+            return turnos.filter(vehiculo__cliente=usuario)
+        return turnos
 
     @extend_schema(
         summary='Reservar un turno',
