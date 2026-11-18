@@ -1,14 +1,16 @@
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.db.models import Prefetch
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from turnos.models import Turno, TurnoServicio
 from turnos.reservas import reservar_turno
 from turnos.serializers import ReservaSerializer, TurnoSerializer
-from turnos.services import ErrorDeTurno
+from turnos.services import ErrorDeTurno, validar_cancelacion
 
 Usuario = get_user_model()
 
@@ -68,3 +70,28 @@ class TurnoViewSet(
 
         turno = self.get_queryset().get(pk=turno.pk)
         return Response(TurnoSerializer(turno).data, status=status.HTTP_201_CREATED)
+
+    @extend_schema(
+        summary='Cancelar un turno',
+        description=(
+            'Cancela un turno pendiente y libera el horario. El cliente solo puede cancelar '
+            'sus turnos (los ajenos dan 404). Devuelve 400 si el turno no está pendiente.'
+        ),
+        request=None,
+        responses={200: TurnoSerializer},
+    )
+    @action(detail=True, methods=['post'])
+    def cancelar(self, request, pk=None):
+        turno = self.get_object()  # 404 si no existe o es de otro cliente
+
+        with transaction.atomic():
+            # Se bloquea la fila para que dos pedidos a la vez no cancelen dos veces.
+            turno_actual = Turno.objects.select_for_update().get(pk=turno.pk)
+            try:
+                turno_actual.estado = validar_cancelacion(turno_actual.estado)
+            except ErrorDeTurno as error:
+                return Response(error.detalle, status=error.codigo_http)
+            turno_actual.save(update_fields=['estado'])
+
+        turno = self.get_queryset().get(pk=turno.pk)
+        return Response(TurnoSerializer(turno).data)
