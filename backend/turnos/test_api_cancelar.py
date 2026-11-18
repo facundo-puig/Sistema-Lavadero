@@ -3,16 +3,15 @@
 Necesitan Postgres.
 """
 
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from decimal import Decimal
 
 import pytest
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 
-from catalogo.models import TipoVehiculo, Vehiculo
+from catalogo.models import Servicio, Tarifa, TipoVehiculo
 from turnos.estados import Estado
-from turnos.models import Turno
 
 Usuario = get_user_model()
 
@@ -154,25 +153,34 @@ def test_cancelar_dos_veces_da_400_la_segunda(api, crear_turno):
     assert segunda.status_code == 400
 
 
-def test_cancelar_libera_el_horario_para_otra_reserva(api, crear_turno, box_1):
-    inicio = datetime(2026, 11, 20, 13, 0, tzinfo=UTC)
-    turno = crear_turno(inicio=inicio, fin=inicio + timedelta(hours=1), box=box_1)
-
-    api.post(url(turno))
-
-    # El mismo box y horario ya no está ocupado: la restricción de la base lo permite.
-    otro_vehiculo = Vehiculo.objects.create(
-        cliente=turno.vehiculo.cliente, patente='XY111ZZ', tipo=TipoVehiculo.AUTO
+def test_cancelar_libera_el_horario_para_otra_reserva(api, cliente, vehiculo, box_1, monkeypatch):
+    """Punta a punta por la API: se reserva, se cancela y el mismo horario se vuelve a reservar."""
+    monkeypatch.setattr(
+        'django.utils.timezone.now', lambda: datetime(2026, 11, 16, 12, 0, tzinfo=UTC)
     )
-    nuevo = Turno.objects.create(
-        vehiculo=otro_vehiculo,
-        box=box_1,
-        inicio=inicio,
-        fin=inicio + timedelta(hours=1),
-        estado=Estado.PENDIENTE,
-        precio_total=Decimal('6000.00'),
+    servicio = Servicio.objects.create(nombre='Lavado completo')
+    Tarifa.objects.create(
+        servicio=servicio,
+        tipo_vehiculo=TipoVehiculo.AUTO,
+        precio=Decimal('9000.00'),
+        duracion_minutos=45,
     )
-    assert nuevo.pk is not None
+    pedido = {
+        'vehiculo': vehiculo.id,
+        'servicios': [servicio.id],
+        'inicio': '2026-11-20T13:00:00Z',
+    }
+
+    primero = api.post('/api/turnos/', pedido, format='json')
+    assert primero.status_code == 201
+    # Con un solo box, el mismo horario está ocupado hasta que se cancele.
+    assert api.post('/api/turnos/', pedido, format='json').status_code == 409
+
+    assert api.post(f'/api/turnos/{primero.data["id"]}/cancelar/').status_code == 200
+
+    segundo = api.post('/api/turnos/', pedido, format='json')
+    assert segundo.status_code == 201
+    assert segundo.data['box']['id'] == box_1.id
 
 
 def test_no_se_permite_cancelar_con_get(api, crear_turno):
