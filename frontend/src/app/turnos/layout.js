@@ -1,15 +1,13 @@
 
 "use client";
 
-import { useMemo } from "react";
-
 import RutaProtegida from "@/components/RutaProtegida";
 
-export default function TurnosLayout({ children }) {
-  const rolesPermitidos = useMemo(() => ["CLIENTE"], []);
+const ROLES_PERMITIDOS = ["CLIENTE"];
 
+export default function TurnosLayout({ children }) {
   return (
-    <RutaProtegida rolesPermitidos={rolesPermitidos}>
+    <RutaProtegida rolesPermitidos={ROLES_PERMITIDOS}>
       {children}
     </RutaProtegida>
   );
