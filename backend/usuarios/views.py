@@ -6,8 +6,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .serializers import LoginRespuestaSerializer, LoginSerializer, LogoutSerializer
-from .services import cerrar_sesion, iniciar_sesion
+from .serializers import (
+    LoginRespuestaSerializer,
+    LoginSerializer,
+    LogoutSerializer,
+    RegistroRespuestaSerializer,
+    RegistroSerializer,
+)
+from .services import cerrar_sesion, iniciar_sesion, registrar_cliente
 
 
 class LoginView(APIView):
@@ -52,3 +58,26 @@ class LogoutView(APIView):
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class RegistroView(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        request=RegistroSerializer,
+        responses={201: RegistroRespuestaSerializer},
+        description='Registrar un nuevo usuario con rol CLIENTE.',
+        tags=['Autenticación'],
+    )
+    def post(self, request):
+        serializer = RegistroSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        resultado = registrar_cliente(
+            nombre=serializer.validated_data['nombre'],
+            email=serializer.validated_data['email'],
+            password=serializer.validated_data['password'],
+        )
+
+        return Response(resultado, status=status.HTTP_201_CREATED)
