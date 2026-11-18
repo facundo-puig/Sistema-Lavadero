@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 import os
+from datetime import time
 from pathlib import Path
 
 import dj_database_url
@@ -69,6 +70,9 @@ INSTALLED_APPS = [
 
     #aplicacion catalogo
     'catalogo',
+  
+    # Aplicación de turnos
+    'turnos',
 ]
 
 AUTH_USER_MODEL = 'usuarios.Usuario'
@@ -150,6 +154,11 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+# Turnos: el horario de atención se define en hora de Argentina (las fechas se guardan en UTC).
+TIMEZONE_NEGOCIO = 'America/Argentina/Buenos_Aires'
+HORARIO_ATENCION_DESDE = time(8, 0)
+HORARIO_ATENCION_HASTA = time(20, 0)
 
 
 # Static files (CSS, JavaScript, Images)
