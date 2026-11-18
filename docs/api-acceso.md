@@ -10,6 +10,60 @@
 - Las rutas protegidas utilizan `Authorization: Bearer <access>`.
 - Los roles disponibles son `ADMINISTRADOR`, `OPERARIO` y `CLIENTE`.
 
+
+
+## HU-A1 — Registro de clientes
+
+### POST /api/auth/registro/
+
+Permite registrar un nuevo cliente utilizando nombre, email y contraseña.
+
+**Acceso:** Público (`AllowAny`).
+
+### Entrada
+
+```json
+{
+  "nombre": "Juan",
+  "email": "juan@example.com",
+  "password": "ClaveSegura123!"
+}
+```
+
+### Respuesta exitosa — HTTP 201
+
+```json
+{
+  "id": 1,
+  "nombre": "Juan",
+  "email": "juan@example.com",
+  "rol": "CLIENTE"
+}
+```
+
+El rol se asigna automáticamente como `CLIENTE`, aunque se envíe otro rol en la solicitud.
+
+### Errores
+
+| Código | Descripción |
+|---|---|
+| 400 | Faltan campos o tienen un formato inválido |
+| 400 | El email ya está registrado |
+| 400 | La contraseña no cumple las validaciones de seguridad |
+
+Los errores de validación se devuelven indicando el campo correspondiente, por ejemplo `email` o `password`.
+
+### Seguridad
+
+- La contraseña se almacena utilizando el sistema de hashing de Django.
+- La contraseña nunca aparece en la respuesta.
+- El registro público no permite crear administradores ni operarios.
+- Los emails se normalizan a minúsculas antes de guardarse.
+
+---
+
+
+
 ## HU-A2 — Inicio de sesión
 
 ### POST /api/auth/login/
