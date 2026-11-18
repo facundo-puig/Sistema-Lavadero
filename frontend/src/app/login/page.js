@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -16,17 +15,17 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
 
-useEffect(() => {
-  const aviso = sessionStorage.getItem("lavadero_aviso");
+  useEffect(() => {
+    const aviso = sessionStorage.getItem("lavadero_aviso");
 
-  if (aviso === "sesion_expirada") {
-    sessionStorage.removeItem("lavadero_aviso");
+    if (aviso === "sesion_expirada") {
+      sessionStorage.removeItem("lavadero_aviso");
 
-    toast.warning(
-      "Tu sesión venció. Iniciá sesión nuevamente."
-    );
-  }
-}, []);  
+      toast.warning(
+        "Tu sesión venció. Iniciá sesión nuevamente."
+      );
+    }
+  }, []);
 
   async function iniciarSesion(evento) {
     evento.preventDefault();
@@ -50,7 +49,7 @@ useEffect(() => {
 
       // Redirección provisional según el rol.
       if (datos.usuario.rol === "CLIENTE") {
-        router.replace("/turnos/nuevo");
+        router.replace("/turnos");
       } else {
         router.replace("/");
       }

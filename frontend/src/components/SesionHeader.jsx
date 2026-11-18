@@ -1,7 +1,7 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -66,6 +66,17 @@ export default function SesionHeader() {
 
   return (
     <div className="flex items-center gap-3">
+      {usuario.rol === "CLIENTE" && (
+        <nav className="flex items-center gap-3 text-sm font-medium">
+          <Link href="/turnos" className="text-blue-600 hover:underline">
+            Mis turnos
+          </Link>
+          <Link href="/turnos/nuevo" className="text-blue-600 hover:underline">
+            Reservar
+          </Link>
+        </nav>
+      )}
+
       <span className="hidden text-sm text-gray-600 sm:inline">
         {usuario.email}
       </span>
