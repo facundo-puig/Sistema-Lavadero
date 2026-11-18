@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',  # necesario para la restricción de superposición de turnos
 
     # API REST
     'rest_framework',
