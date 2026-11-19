@@ -1,10 +1,10 @@
 from django.db.models import Prefetch
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics, viewsets
-from rest_framework.permissions import IsAuthenticated
 
 from catalogo.models import Servicio, Tarifa, Vehiculo
 from catalogo.serializers import ServicioCatalogoSerializer, VehiculoSerializer
+from usuarios.permisos import EsCliente
 
 
 @extend_schema(
@@ -15,9 +15,7 @@ from catalogo.serializers import ServicioCatalogoSerializer, VehiculoSerializer
     ),
 )
 class CatalogoView(generics.ListAPIView):
-    # TODO: solo para clientes: cuando se mergee `usuarios/permisos.py` (HU-A4),
-    # usar EsCliente.
-    permission_classes = [IsAuthenticated]
+    permission_classes = [EsCliente]
     serializer_class = ServicioCatalogoSerializer
     pagination_class = None
 
@@ -57,9 +55,7 @@ class CatalogoView(generics.ListAPIView):
     ),
 )
 class VehiculoViewSet(viewsets.ModelViewSet):
-    # TODO: solo para clientes: cuando se mergee `usuarios/permisos.py` (HU-A4),
-    # usar EsCliente.
-    permission_classes = [IsAuthenticated]
+    permission_classes = [EsCliente]
     serializer_class = VehiculoSerializer
     queryset = Vehiculo.objects.all()
 
