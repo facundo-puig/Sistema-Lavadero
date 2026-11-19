@@ -61,6 +61,11 @@ class BoxResumenSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre']
 
 
+class ClienteResumenSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    nombre = serializers.CharField()
+
+
 class TurnoServicioSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='servicio_id')
     nombre = serializers.CharField(source='servicio.nombre')
@@ -96,3 +101,16 @@ class TurnoSerializer(serializers.ModelSerializer):
         # Orden estable: el de contratación. Usa los servicios ya precargados si los hay.
         items = sorted(turno.servicios.all(), key=lambda item: item.pk)
         return TurnoServicioSerializer(items, many=True).data
+
+class TurnoAgendaSerializer(TurnoSerializer):
+    """El Turno con el cliente incluido: lo que ven el administrador y el operario."""
+
+    cliente = serializers.SerializerMethodField()
+
+    class Meta(TurnoSerializer.Meta):
+        fields = [*TurnoSerializer.Meta.fields, 'cliente']
+
+    @extend_schema_field(ClienteResumenSerializer)
+    def get_cliente(self, turno):
+        cliente = turno.vehiculo.cliente
+        return {'id': cliente.id, 'nombre': cliente.get_full_name() or cliente.email}

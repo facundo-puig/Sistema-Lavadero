@@ -7,10 +7,12 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from turnos.filtros import TurnoFilter
 from turnos.models import Turno, TurnoServicio
 from turnos.reservas import reservar_turno
-from turnos.serializers import ReservaSerializer, TurnoSerializer
+from turnos.serializers import ReservaSerializer, TurnoAgendaSerializer, TurnoSerializer
 from turnos.services import ErrorDeTurno, validar_cancelacion
+from usuarios.permisos import EsCliente
 
 Usuario = get_user_model()
 
@@ -19,8 +21,10 @@ Usuario = get_user_model()
     list=extend_schema(
         summary='Listar turnos',
         description=(
-            'El cliente ve solo sus turnos. Administrador y operario ven todos. '
-            'Ordenados por inicio, paginados de a 20.'
+            'El cliente ve solo sus turnos. Administrador y operario ven todos, con el cliente '
+            'incluido (es la agenda). Ordenados por inicio, paginados de a 20. Filtros '
+            'opcionales: `fecha` (día en hora de Argentina), `box` (id) y `estado`; un valor '
+            'inválido devuelve 400.'
         ),
     ),
     retrieve=extend_schema(
@@ -33,14 +37,29 @@ class TurnoViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
-    # TODO: la reserva (`create`) es solo para clientes: cuando se mergee
-    # `usuarios/permisos.py` (HU-A4), usar EsCliente en esa acción.
-    permission_classes = [IsAuthenticated]
     serializer_class = TurnoSerializer
     queryset = Turno.objects.all()
+    filterset_class = TurnoFilter
+
+    def get_permissions(self):
+        # Reservar es solo para clientes. Listar, ver el detalle y cancelar los usan los tres
+        # roles; el queryset ya limita al cliente a sus propios turnos.
+        if self.action == 'create':
+            return [EsCliente()]
+        return [IsAuthenticated()]
+
+    def get_serializer_class(self):
+        # El personal ve además el cliente de cada turno (es la base de la agenda).
+        rol = getattr(self.request.user, 'rol', None)
+        if self.action in ('list', 'retrieve') and rol in (
+            Usuario.Rol.ADMINISTRADOR,
+            Usuario.Rol.OPERARIO,
+        ):
+            return TurnoAgendaSerializer
+        return TurnoSerializer
 
     def get_queryset(self):
-        turnos = Turno.objects.select_related('vehiculo', 'box').prefetch_related(
+        turnos = Turno.objects.select_related('vehiculo__cliente', 'box').prefetch_related(
             Prefetch('servicios', queryset=TurnoServicio.objects.select_related('servicio'))
         )
         usuario = self.request.user
