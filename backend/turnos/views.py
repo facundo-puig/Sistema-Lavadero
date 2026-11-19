@@ -11,6 +11,7 @@ from turnos.models import Turno, TurnoServicio
 from turnos.reservas import reservar_turno
 from turnos.serializers import ReservaSerializer, TurnoSerializer
 from turnos.services import ErrorDeTurno, validar_cancelacion
+from usuarios.permisos import EsCliente
 
 Usuario = get_user_model()
 
@@ -33,11 +34,15 @@ class TurnoViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
-    # TODO: la reserva (`create`) es solo para clientes: cuando se mergee
-    # `usuarios/permisos.py` (HU-A4), usar EsCliente en esa acción.
-    permission_classes = [IsAuthenticated]
     serializer_class = TurnoSerializer
     queryset = Turno.objects.all()
+
+    def get_permissions(self):
+        # Reservar es solo para clientes. Listar, ver el detalle y cancelar los usan los tres
+        # roles; el queryset ya limita al cliente a sus propios turnos.
+        if self.action == 'create':
+            return [EsCliente()]
+        return [IsAuthenticated()]
 
     def get_queryset(self):
         turnos = Turno.objects.select_related('vehiculo', 'box').prefetch_related(
