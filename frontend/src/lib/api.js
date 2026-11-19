@@ -131,7 +131,8 @@ export async function apiFetch(path, options = {}) {
 
   const esLogin = path === "/api/auth/login/";
   const esRefresh = path === "/api/auth/refresh/";
-  const esRutaPublicaAuth = esLogin || esRefresh;
+  const esRegistro = path === "/api/auth/registro/";
+  const esRutaPublicaAuth = esLogin || esRefresh || esRegistro;
 
   const token = esRutaPublicaAuth ? null : obtenerAccessToken();
 

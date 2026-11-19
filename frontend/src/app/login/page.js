@@ -1,6 +1,8 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -43,11 +45,9 @@ export default function LoginPage() {
 
       guardarSesion(datos);
 
-      // Limpiar los campos después de iniciar sesión.
       setEmail("");
       setPassword("");
 
-      // Redirección provisional según el rol.
       if (datos.usuario.rol === "CLIENTE") {
         router.replace("/turnos");
       } else {
@@ -130,6 +130,16 @@ export default function LoginPage() {
             {cargando ? "Ingresando..." : "Iniciar sesión"}
           </button>
         </form>
+
+        <p className="mt-6 text-center text-sm text-gray-600">
+          ¿Todavía no tenés una cuenta?{" "}
+          <Link
+            href="/registro"
+            className="font-medium text-blue-600 hover:underline"
+          >
+            Registrate
+          </Link>
+        </p>
       </section>
     </main>
   );

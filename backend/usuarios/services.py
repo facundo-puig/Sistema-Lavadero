@@ -49,3 +49,24 @@ def cerrar_sesion(usuario, refresh_token):
         raise ValidationError({
             'refresh': 'El token es inválido o ya fue revocado.'
         })
+
+
+def registrar_cliente(nombre, email, password):
+    Usuario = get_user_model()
+
+    email = email.strip().lower()
+
+    usuario = Usuario.objects.create_user(
+        username=email,
+        email=email,
+        password=password,
+        first_name=nombre.strip(),
+        rol=Usuario.Rol.CLIENTE,
+    )
+
+    return {
+        'id': usuario.id,
+        'nombre': usuario.first_name,
+        'email': usuario.email,
+        'rol': usuario.rol,
+    }
