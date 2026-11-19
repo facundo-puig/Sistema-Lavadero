@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -51,7 +50,7 @@ export default function LoginPage() {
       if (datos.usuario.rol === "CLIENTE") {
         router.replace("/turnos");
       } else {
-        router.replace("/");
+        router.replace("/agenda");
       }
     } catch (err) {
       setError(err.message || "No se pudo iniciar sesión.");
