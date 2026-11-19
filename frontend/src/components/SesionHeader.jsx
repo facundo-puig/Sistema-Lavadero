@@ -77,6 +77,14 @@ export default function SesionHeader() {
         </nav>
       )}
 
+      {(usuario.rol === "ADMINISTRADOR" || usuario.rol === "OPERARIO") && (
+        <nav className="flex items-center gap-3 text-sm font-medium">
+          <Link href="/agenda" className="text-blue-600 hover:underline">
+            Agenda
+          </Link>
+        </nav>
+      )}
+
       <span className="hidden text-sm text-gray-600 sm:inline">
         {usuario.email}
       </span>
