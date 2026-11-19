@@ -31,7 +31,7 @@ export default function ServicioOpcion({ servicio, tipoVehiculo, marcado, onCamb
                     <>
                         <span className="block font-medium">{formatearPrecio(tarifa.precio)}</span>
                         <span className="block text-gray-600">
-                            {formatearDuracion(tarifa.duracion_min)}
+                            {formatearDuracion(tarifa.duracion_minutos)}
                         </span>
                     </>
                 ) : sinTarifa ? (
