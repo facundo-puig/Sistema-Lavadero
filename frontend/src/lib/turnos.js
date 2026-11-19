@@ -17,8 +17,9 @@ function aHHMM(minutos) {
 }
 
 // Tarifa de un servicio para un tipo de vehículo, o undefined si no existe.
+// La API devuelve las tarifas como lista: [{ tipo_vehiculo, precio, duracion_minutos }].
 export function tarifaDe(servicio, tipoVehiculo) {
-    return servicio.tarifas[tipoVehiculo];
+    return servicio.tarifas.find((t) => t.tipo_vehiculo === tipoVehiculo);
 }
 
 // Precio total (en centavos, para no arrastrar errores de decimales) y duración total.
@@ -29,7 +30,7 @@ export function calcularResumen(servicios, tipoVehiculo) {
         const tarifa = tarifaDe(servicio, tipoVehiculo);
         if (!tarifa) continue;
         centavos += Math.round(parseFloat(tarifa.precio) * 100);
-        minutos += tarifa.duracion_min;
+        minutos += tarifa.duracion_minutos;
     }
     return { precioTotal: (centavos / 100).toFixed(2), duracionMin: minutos };
 }
