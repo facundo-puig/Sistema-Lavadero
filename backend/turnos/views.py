@@ -58,13 +58,6 @@ class TurnoViewSet(
             return TurnoAgendaSerializer
         return TurnoSerializer
 
-    def get_permissions(self):
-        # Reservar es solo para clientes. Listar, ver el detalle y cancelar los usan los tres
-        # roles; el queryset ya limita al cliente a sus propios turnos.
-        if self.action == 'create':
-            return [EsCliente()]
-        return [IsAuthenticated()]
-
     def get_queryset(self):
         turnos = Turno.objects.select_related('vehiculo__cliente', 'box').prefetch_related(
             Prefetch('servicios', queryset=TurnoServicio.objects.select_related('servicio'))
