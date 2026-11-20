@@ -9,6 +9,7 @@ Contrato de los endpoints del bloque de catálogo: servicios con sus tarifas, bo
 - Los importes viajan como texto con dos decimales (`"9000.00"`).
 - Tipos de vehículo: `auto`, `camioneta` y `moto`.
 - Errores de validación (**400**): `{"campo": ["mensaje"]}`. Otros errores: `{"detail": "mensaje"}`.
+- Los errores de las tarifas de un servicio llevan el detalle de cada elemento de la lista, por ejemplo `{"tarifas": [{"precio": ["mensaje"]}, {}]}`. Un `tipo_vehiculo` repetido da `{"tarifas": ["mensaje"]}`.
 - Los listados van paginados: `{"count": 0, "next": null, "previous": null, "results": []}`, con 20 elementos por página. La excepción es `GET /api/catalogo/`, que devuelve la lista completa.
 - `DELETE` hace baja lógica (`activo=false`) y nunca borra la fila. Responde **204** sin cuerpo, también si el registro ya estaba inactivo.
 
@@ -179,7 +180,7 @@ Lista los servicios con sus tarifas (HU-B1 y HU-B2).
 Crea un servicio junto con sus tarifas.
 
 - **Rol:** administrador.
-- **Entrada:** `nombre`, `descripcion` (opcional) y `tarifas`, una lista con `tipo_vehiculo`, `precio` y `duracion_minutos` (sin repetir tipo). `activo` queda en `true`.
+- **Entrada:** `nombre`, `descripcion` (opcional) y `tarifas` (opcional), una lista con `tipo_vehiculo`, `precio` y `duracion_minutos` (sin repetir tipo). `activo` queda en `true`.
 - **Salida 201:** objeto Servicio.
 
 ```json
@@ -253,7 +254,7 @@ Gestión de boxes (HU-B3). Solo administrador.
 
 | Código | Cuándo |
 |---|---|
-| 400 | Nombre faltante o inválido |
+| 400 | Nombre faltante, inválido o ya usado por otro box |
 | 401 | Sin sesión |
 | 403 | El usuario no es administrador |
 | 404 | No existe |
