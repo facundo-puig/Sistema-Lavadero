@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 import os
-from datetime import time
+from datetime import time, timedelta
 from pathlib import Path
 
 import dj_database_url
@@ -192,6 +192,11 @@ REST_FRAMEWORK = {
     # Todos los listados van paginados de a 20.
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
 

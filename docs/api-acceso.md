@@ -112,3 +112,70 @@ El sistema no revela si un email existe al devolver un error de autenticación.
 - Las contraseñas nunca se devuelven en las respuestas.
 - Los tokens se generan utilizando SimpleJWT.
 - El almacenamiento del token en el frontend se documentará en el README.
+
+
+
+---
+
+## HU-A3 — Renovación y cierre de sesión
+
+### Configuración de JWT
+
+La autenticación utiliza SimpleJWT con las siguientes duraciones:
+
+- Access token: 5 minutos.
+- Refresh token: 1 día.
+
+Los valores están configurados explícitamente en `backend/config/settings.py`.
+
+### POST /api/auth/refresh/
+
+**Acceso:** Público.
+
+Permite obtener un nuevo access token utilizando un refresh válido.
+
+#### Entrada
+
+```json
+{
+  "refresh": "token_refresh"
+}
+```
+
+#### Respuesta exitosa — HTTP 200
+
+```json
+{
+  "access": "nuevo_token_access"
+}
+```
+
+Un refresh inválido, vencido o revocado devuelve HTTP 401.
+
+### POST /api/auth/logout/
+
+**Acceso:** Usuario autenticado mediante Bearer token.
+
+Permite cerrar la sesión revocando el refresh token correspondiente.
+
+#### Entrada
+
+```json
+{
+  "refresh": "token_refresh"
+}
+```
+
+#### Respuesta exitosa — HTTP 204
+
+No devuelve contenido.
+
+#### Errores
+
+| Código | Descripción |
+|---|---|
+| 400 | El refresh no pertenece al usuario autenticado |
+| 400 | El refresh es inválido o ya fue revocado |
+| 401 | No se proporcionó un access válido |
+
+Un usuario no puede revocar el refresh de otro usuario. Si lo intenta, la API devuelve 400 y el token ajeno sigue siendo válido.
