@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -68,21 +69,41 @@ export default function SesionHeader() {
     <div className="flex items-center gap-3">
       {usuario.rol === "CLIENTE" && (
         <nav className="flex items-center gap-3 text-sm font-medium">
-          <Link href="/turnos" className="text-blue-600 hover:underline">
+          <Link
+            href="/turnos"
+            className="text-blue-600 hover:underline"
+          >
             Mis turnos
           </Link>
-          <Link href="/turnos/nuevo" className="text-blue-600 hover:underline">
+
+          <Link
+            href="/turnos/nuevo"
+            className="text-blue-600 hover:underline"
+          >
             Reservar
           </Link>
         </nav>
       )}
 
-      {(usuario.rol === "ADMINISTRADOR" || usuario.rol === "OPERARIO") && (
+      {(usuario.rol === "ADMINISTRADOR" ||
+        usuario.rol === "OPERARIO") && (
         <nav className="flex items-center gap-3 text-sm font-medium">
-          <Link href="/agenda" className="text-blue-600 hover:underline">
+          <Link
+            href="/agenda"
+            className="text-blue-600 hover:underline"
+          >
             Agenda
           </Link>
         </nav>
+      )}
+
+      {usuario.rol === "ADMINISTRADOR" && (
+        <Link
+          href="/admin/usuarios"
+          className="text-sm font-medium text-blue-600 hover:underline"
+        >
+          Usuarios
+        </Link>
       )}
 
       <span className="hidden text-sm text-gray-600 sm:inline">
