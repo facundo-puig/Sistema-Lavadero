@@ -55,3 +55,8 @@ def api_de():
         return api
 
     return _api
+
+
+@pytest.fixture
+def api_admin(api_de, administrador):
+    return api_de(administrador)
