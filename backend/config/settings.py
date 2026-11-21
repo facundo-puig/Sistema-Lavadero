@@ -206,6 +206,9 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Sistema Lavadero API',
     'DESCRIPTION': 'API REST para la gestión del lavadero de vehículos.',
     'VERSION': '1.0.0',
+    'ENUM_NAME_OVERRIDES': {
+        'TipoVehiculoEnum': 'catalogo.models.TipoVehiculo',
+    },
 }
 
 # Endurecimiento para producción (Render termina el HTTPS y reenvía el protocolo).
