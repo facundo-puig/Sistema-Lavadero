@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Frontend — Sistema Lavadero
 
-## Getting Started
+Aplicación en Next.js (App Router, JavaScript) y Tailwind CSS. Consume la API REST del backend; la guía general del proyecto está en el [README de la raíz](../README.md).
 
-First, run the development server:
+## Puesta en marcha
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local   # NEXT_PUBLIC_API_URL=http://localhost:8000 (sin /api)
+npm install
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+El backend tiene que estar levantado (ver [`backend/README.md`](../backend/README.md)).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` | Servidor de desarrollo |
+| `npm run build` | Build de producción |
+| `npm run start` | Sirve el build de producción |
+| `npm run lint` | Revisa el código con ESLint |
 
-## Learn More
+## Estructura
 
-To learn more about Next.js, take a look at the following resources:
+- `src/app/`: rutas (login, registro, turnos, vehículos, agenda, resumen y `admin/`). Cada ruta restringida por rol tiene un `layout.js` con `RutaProtegida`.
+- `src/components/`: componentes compartidos y de turnos.
+- `src/lib/`: cliente de la API (`api.js`, con renovación automática del token), sesión y utilidades.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Despliegue
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Vercel, con `frontend` como Root Directory y la variable `NEXT_PUBLIC_API_URL` apuntando a la URL del backend, sin `/api` ni barra final.
