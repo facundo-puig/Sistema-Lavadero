@@ -207,3 +207,11 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API REST para la gestión del lavadero de vehículos.',
     'VERSION': '1.0.0',
 }
+
+# Endurecimiento para producción (Render termina el HTTPS y reenvía el protocolo).
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_CONTENT_TYPE_NOSNIFF = True
