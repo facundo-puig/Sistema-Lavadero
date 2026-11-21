@@ -1,4 +1,3 @@
-
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 
@@ -29,7 +28,7 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col bg-gray-50 text-gray-900">
         <header className="border-b bg-white">
-          <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3">
+          <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
             <span className="font-semibold">
               Sistema Lavadero
             </span>
