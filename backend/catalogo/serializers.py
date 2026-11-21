@@ -27,6 +27,20 @@ def normalizar_patente(valor):
     return re.sub(r'[\s-]', '', valor).upper()
 
 
+def _errores_de_tarifas_como_lista(errores):
+    """Devuelve los errores de `tarifas` como lista, un elemento por tarifa.
+
+    Desde DRF 3.18 los errores de una lista anidada llegan como un diccionario
+    indexado por posición ({'0': {...}}). El contrato de la API los define como
+    lista, con un objeto vacío por cada tarifa sin errores: [{...}, {}].
+    """
+    detalle = errores.get('tarifas') if isinstance(errores, dict) else None
+    if isinstance(detalle, dict) and all(str(clave).isdigit() for clave in detalle):
+        cantidad = max(int(clave) for clave in detalle) + 1
+        errores['tarifas'] = [detalle.get(str(i), detalle.get(i, {})) for i in range(cantidad)]
+    return errores
+
+
 def servicios_con_tarifas():
     """Servicios con sus tarifas precargadas, ordenadas por id."""
     tarifas = Tarifa.objects.order_by('id')
@@ -100,6 +114,12 @@ class ServicioSerializer(serializers.ModelSerializer):
                 },
             },
         }
+
+    def to_internal_value(self, data):
+        try:
+            return super().to_internal_value(data)
+        except serializers.ValidationError as error:
+            raise serializers.ValidationError(_errores_de_tarifas_como_lista(error.detail))
 
     def validate_tarifas(self, tarifas):
         # En un PATCH, DRF omite los campos ausentes sin exigirlos: una tarifa
