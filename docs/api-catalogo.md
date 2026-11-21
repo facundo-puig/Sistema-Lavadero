@@ -139,12 +139,14 @@ Registra un vehículo del cliente autenticado.
 
 Edita `patente` y `tipo` de un vehículo propio. `PUT` exige ambos campos; `PATCH` acepta cualquiera de los dos. La patente se normaliza igual que al crear.
 
+El `tipo` no se puede cambiar si el vehículo tiene turnos `pendiente` o `en_proceso`, porque el precio y la duración de esos turnos quedarían desajustados: responde **400** con `{"tipo": ["No se puede cambiar el tipo de un vehículo con turnos pendientes o en proceso."]}`. Enviar el mismo `tipo` que ya tiene no cuenta como cambio.
+
 - **Rol:** cliente.
 - **Salida 200:** objeto Vehículo actualizado.
 
 | Código | Cuándo |
 |---|---|
-| 400 | Patente con formato inválido o ya registrada por otro vehículo; `tipo` inexistente |
+| 400 | Patente con formato inválido o ya registrada por otro vehículo; `tipo` inexistente; cambio de `tipo` con turnos pendientes o en proceso |
 | 401 | Sin sesión |
 | 403 | El usuario no es cliente |
 | 404 | No existe o pertenece a otro cliente |

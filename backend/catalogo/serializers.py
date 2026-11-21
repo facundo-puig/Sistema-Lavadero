@@ -7,6 +7,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
 from catalogo.models import Box, Servicio, Tarifa, Vehiculo
+from catalogo.services import MENSAJE_CAMBIO_DE_TIPO, puede_cambiar_de_tipo
 
 # Formatos válidos: ABC123, AB123CD, 123ABC y A123BCD.
 PATENTE_VALIDA = re.compile(
@@ -197,6 +198,11 @@ class VehiculoSerializer(serializers.ModelSerializer):
                 },
             },
         }
+
+    def validate_tipo(self, tipo):
+        if self.instance is not None and not puede_cambiar_de_tipo(self.instance, tipo):
+            raise serializers.ValidationError(MENSAJE_CAMBIO_DE_TIPO)
+        return tipo
 
     def validate_patente(self, valor):
         patente = normalizar_patente(valor)
