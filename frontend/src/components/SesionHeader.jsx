@@ -81,6 +81,13 @@ export default function SesionHeader() {
           >
             Reservar
           </Link>
+
+          <Link
+            href="/vehiculos"
+            className="text-blue-600 hover:underline"
+          >
+            Mis vehículos
+          </Link>
         </nav>
       )}
 
