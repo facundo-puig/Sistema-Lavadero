@@ -112,12 +112,26 @@ export default function SesionHeader() {
         )}
 
       {usuario.rol === "ADMINISTRADOR" && (
-        <Link
-          href="/admin/usuarios"
-          className="text-sm font-medium text-blue-600 hover:underline"
-        >
-          Usuarios
-        </Link>
+        <nav className="flex items-center gap-3 text-sm font-medium">
+          <Link
+            href="/admin/servicios"
+            className="text-blue-600 hover:underline"
+          >
+            Servicios
+          </Link>
+          <Link
+            href="/admin/boxes"
+            className="text-blue-600 hover:underline"
+          >
+            Boxes
+          </Link>
+          <Link
+            href="/admin/usuarios"
+            className="text-blue-600 hover:underline"
+          >
+            Usuarios
+          </Link>
+        </nav>
       )}
 
       <span className="hidden text-sm text-gray-600 sm:inline">
