@@ -73,7 +73,7 @@ uv run pytest -k turno   # solo los que tengan "turno" en el nombre
 uv run ruff check .      # linter
 ```
 
-Los tests de cada app viven en `tests.py` o en archivos `test_*.py` dentro de la app.
+Los tests de cada app viven en su carpeta `tests/` (`catalogo/tests/`, `turnos/tests/` y `usuarios/tests/`), en archivos `test_*.py`.
 
 ## Problemas frecuentes
 
