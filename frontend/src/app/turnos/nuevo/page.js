@@ -183,7 +183,11 @@ export default function NuevoTurnoPage() {
 
             {carga === "lista" && vehiculos.length === 0 && (
                 <div role="status" className="mt-6 rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-                    Todavía no tenés vehículos registrados. Registrá uno en «Mis vehículos» para poder reservar.
+                    Todavía no tenés vehículos registrados. Registrá uno en{" "}
+                    <Link href="/vehiculos" className="font-medium underline">
+                        Mis vehículos
+                    </Link>{" "}
+                    para poder reservar.
                 </div>
             )}
 
