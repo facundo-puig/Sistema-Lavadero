@@ -65,9 +65,9 @@ export default function SesionHeader() {
   }
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-2">
       {usuario.rol === "CLIENTE" && (
-        <nav className="flex items-center gap-3 text-sm font-medium">
+        <nav className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-medium">
           <Link
             href="/turnos"
             className="text-blue-600 hover:underline"
@@ -93,7 +93,7 @@ export default function SesionHeader() {
 
       {(usuario.rol === "ADMINISTRADOR" ||
         usuario.rol === "OPERARIO") && (
-          <nav className="flex items-center gap-3 text-sm font-medium">
+          <nav className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-medium">
             <Link
               href="/agenda"
               className="text-blue-600 hover:underline"
@@ -112,7 +112,7 @@ export default function SesionHeader() {
         )}
 
       {usuario.rol === "ADMINISTRADOR" && (
-        <nav className="flex items-center gap-3 text-sm font-medium">
+        <nav className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-medium">
           <Link
             href="/admin/servicios"
             className="text-blue-600 hover:underline"
