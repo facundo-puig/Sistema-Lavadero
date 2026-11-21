@@ -1,5 +1,3 @@
-# SISTEMA LAVADERO
-
 # Sistema Lavadero
 
 Sistema de gestión para un lavadero de vehículos: los clientes registran sus vehículos y reservan turnos eligiendo servicios y horario de inicio, y el personal del lavadero administra la agenda, el catálogo de servicios con sus precios, los boxes y los usuarios.
@@ -32,7 +30,7 @@ Arquitectura desacoplada: el frontend consume la API REST (prefijo `/api/`) y no
 
 ## Estructura del repositorio
 
-
+```text
 Sistema-Lavadero/
 ├── backend/ # Django y DRF (ver backend/README.md)
 │ ├── usuarios/ # registro, login, permisos por rol, gestión de usuarios
@@ -42,6 +40,7 @@ Sistema-Lavadero/
 ├── frontend/ # Next.js
 ├── docs/ # contratos de la API y matriz de permisos
 └── .github/ # plantilla de Pull Request
+```
 
 
 
@@ -249,7 +248,12 @@ El frontend guarda la sesión (`access` y `refresh`) en `sessionStorage` (`front
 
 El frontend se despliega en Vercel y el backend, junto con su base Postgres, en Render, siempre desde la rama `main`. En producción valen las mismas variables que en `backend/.env.example`, con `DEBUG=False`, los dominios reales en `ALLOWED_HOSTS` y `CORS_ALLOWED_ORIGINS`, y una `SECRET_KEY` propia (nunca la de desarrollo).
 
-**URLs de producción:** se agregan al cerrar el despliegue.
+**URLs de producción:**
+
+- Frontend (Vercel): <https://sistema-lavadero.vercel.app/>
+- API (Render): <https://sistema-lavadero.onrender.com> (documentación en `/api/docs/`)
+
+El plan gratuito de Render duerme el servicio por inactividad: la primera petición puede tardar entre 30 y 60 segundos.
 
 ## Flujo de trabajo del equipo
 
@@ -311,7 +315,3 @@ El botón **Cerrar sesión** revoca el refresh en el backend y elimina los datos
 | Acceso: registro, login, roles y gestión de usuarios | Mateo |
 | Catálogo: servicios, tarifas, boxes, vehículos, seeds y documentación | Gonzalo |
 | Turnos: reserva, agenda, estados, resumen, despliegue y cierre | Facundo |
-
-
-
-
