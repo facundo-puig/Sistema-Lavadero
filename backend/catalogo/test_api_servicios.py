@@ -379,3 +379,20 @@ def test_los_endpoints_aparecen_en_la_documentacion_de_swagger(api_admin):
 
     assert respuesta.status_code == 200
     assert '/api/servicios/' in respuesta.content.decode()
+
+
+def test_los_errores_de_tarifas_son_una_lista_con_un_elemento_por_tarifa(api_admin):
+    respuesta = api_admin.post(
+        URL,
+        {
+            'nombre': 'Encerado',
+            'tarifas': [tarifa('auto', '9000.00', 40), tarifa('moto', '0', 30)],
+        },
+        format='json',
+    )
+
+    assert respuesta.status_code == 400
+    errores = respuesta.json()['tarifas']
+    assert isinstance(errores, list)
+    assert errores[0] == {}
+    assert 'precio' in errores[1]
