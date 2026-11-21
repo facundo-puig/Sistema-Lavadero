@@ -30,6 +30,6 @@ ignore = ["RUF012"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings"
-# Los tests de cada app pueden estar en tests.py o en archivos test_*.py.
+# Los tests de cada app viven en <app>/tests/ como archivos test_*.py.
 python_files = ["tests.py", "test_*.py"]
 addopts = "-ra"
